@@ -23,9 +23,9 @@
 
 #define ADC_PIN PIN_58
 #define NUM_AVGS 512
-#define RESOLUTION 4096/1.7
+#define RESOLUTION 1.46/4096
 
-unsigned int GetTemperature() {
+float GetTemperature() {
 	// Pinmux for the selected ADC input pin
 	MAP_PinTypeADC(ADC_PIN,PIN_MODE_255);
 
@@ -51,14 +51,19 @@ unsigned int GetTemperature() {
     MAP_ADCEnable(ADC_BASE);
 
     // Sample 512 times and average
-	unsigned int i = 0;
+	unsigned int i = 0, numSamples = 0;
 	unsigned long sampleTotal = 0;
     for (i = 0; i < NUM_AVGS; i++) {
 		if (MAP_ADCFIFOLvlGet(ADC_BASE, adcChannel)) {
 			unsigned long sample = MAP_ADCFIFORead(ADC_BASE, adcChannel);
-			sampleTotal += (sample >> 2) & 0x00000FFF; // Get 12 bit sample out
+			sample = (sample >> 2) & 0x00000FFF; // Get 12 bit sample out
+			sampleTotal += sample;
+			numSamples++;
 		}
     }
 
-	return sampleTotal / NUM_AVGS;
+    float millivolts = (sampleTotal * RESOLUTION * 1000) / numSamples;
+    float celcius = (millivolts - 500) / 10;
+    float fahrenheit = celcius*1.8 + 32;
+	return fahrenheit;
 }

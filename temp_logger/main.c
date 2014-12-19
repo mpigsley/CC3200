@@ -943,7 +943,7 @@ BoardInit(void)
 //                         TEMPERATURE FUNCTION
 //*****************************************************************************
 void LogTemperature( void *pvParameters ) {
-	UART_PRINT("Temperature: %u\r\n", GetTemperature());
+	UART_PRINT("Temperature: %f\r\n", GetTemperature());
 }
 
 //*****************************************************************************

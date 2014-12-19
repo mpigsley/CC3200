@@ -8,6 +8,6 @@
 #ifndef TEMP_H_
 #define TEMP_H_
 
-unsigned int GetTemperature();
+float GetTemperature();
 
 #endif /* TEMP_H_ */
