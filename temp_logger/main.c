@@ -84,6 +84,9 @@
 #include "common.h"
 #include "pinmux.h"
 
+//My includes
+#include "temp.h"
+
 
 #define APPLICATION_NAME        "WLAN STATION"
 #define APPLICATION_VERSION     "1.1.0"
@@ -881,6 +884,7 @@ void WlanStationMode( void *pvParameters )
     LOOP_FOREVER();
     
 }
+
 //*****************************************************************************
 //
 //! Application startup display on UART
@@ -900,6 +904,7 @@ DisplayBanner(char * AppName)
     UART_PRINT("\t\t *************************************************\n\r");
     UART_PRINT("\n\n\n\r");
 }
+
 //*****************************************************************************
 //
 //! \brief  Board Initialization & Configuration
@@ -934,6 +939,12 @@ BoardInit(void)
     PRCMCC3200MCUInit();
 }
 
+//*****************************************************************************
+//                         TEMPERATURE FUNCTION
+//*****************************************************************************
+void LogTemperature( void *pvParameters ) {
+	UART_PRINT("Temperature: %u\r\n", GetTemperature());
+}
 
 //*****************************************************************************
 //                            MAIN FUNCTION
@@ -982,12 +993,28 @@ void main()
         LOOP_FOREVER();
     }
 
-    //
     // Start the WlanStationMode task
-    //
-    lRetVal = osi_TaskCreate( WlanStationMode, \
-                                (const signed char*)"Wlan Station Task", \
-                                OSI_STACK_SIZE, NULL, 1, NULL );
+	lRetVal = osi_TaskCreate( WlanStationMode, \
+								(const signed char*)"Wlan Station Task", \
+								OSI_STACK_SIZE, NULL, 1, NULL );
+
+    if(lRetVal < 0)
+    {
+        ERR_PRINT(lRetVal);
+        LOOP_FOREVER();
+    }
+
+    // Start the Temperature Logger task
+    lRetVal = osi_TaskCreate( LogTemperature, \
+                                (const signed char*)"Temperature Logger Task", \
+                                OSI_STACK_SIZE, NULL, 2, NULL );
+
+    if(lRetVal < 0)
+    {
+        ERR_PRINT(lRetVal);
+        LOOP_FOREVER();
+    }
+
     if(lRetVal < 0)
     {
         ERR_PRINT(lRetVal);
