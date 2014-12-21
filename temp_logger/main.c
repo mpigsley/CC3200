@@ -1,61 +1,11 @@
 //*****************************************************************************
-//
-//  Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
-// 
-// 
-//  Redistribution and use in source and binary forms, with or without 
-//  modification, are permitted provided that the following conditions 
-//  are met:
-//
-//  Redistributions of source code must retain the above copyright 
-//  notice, this list of conditions and the following disclaimer.
-//
-//  Redistributions in binary form must reproduce the above copyright
-//  notice, this list of conditions and the following disclaimer in the 
-//  documentation and/or other materials provided with the   
-//  distribution.
-//
-//  Neither the name of Texas Instruments Incorporated nor the names of
-//  its contributors may be used to endorse or promote products derived
-//  from this software without specific prior written permission.
-//
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-//  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-//  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-//  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
-//  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
-//  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
-//  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-//  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-//  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-//  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
-//  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//	Author: 		Mitchel Pigsley
+//	Created: 		12/19/2014
+//	Last Updated: 	2/21/2014
+//	Description:	Get temperature reading from a TMP36 component and upload
+//					data to web server at a rate of once per minute.
 //
 //*****************************************************************************
-
-
-//*****************************************************************************
-//
-// Application Name     -   Getting started with WLAN STATION
-// Application Overview -   This is a sample application demonstrating how to
-//                          start CC3200 in WLAN-Station mode and connect to a
-//                          Wi-Fi access-point. The application connects to an
-//                          access-point and ping the gateway. It also checks
-//                          for an internet connectivity by pinging "www.ti.com"
-// Application Details  -
-// http://processors.wiki.ti.com/index.php/CC32xx_Getting_Started_with_WLAN_Station
-// or
-// doc\examples\CC32xx_Getting_Started_with_WLAN_Station.pdf
-//
-//*****************************************************************************
-
-
-//****************************************************************************
-//
-//! \addtogroup getting_started_sta
-//! @{
-//
-//****************************************************************************
 
 // Standard includes
 #include <stdlib.h>
@@ -87,21 +37,14 @@
 //My includes
 #include "temp.h"
 
-
 #define APPLICATION_NAME        "WLAN STATION"
 #define APPLICATION_VERSION     "1.1.0"
-
 #define HOST_NAME               "www.ti.com"
-
-//
-// Values for below macros shall be modified for setting the 'Ping' properties
-//
-#define PING_INTERVAL       1000    /* In msecs */
-#define PING_TIMEOUT        3000    /* In msecs */
-#define PING_PKT_SIZE       20      /* In bytes */
-#define NO_OF_ATTEMPTS      3
-
-#define OSI_STACK_SIZE      2048
+#define PING_INTERVAL       	1000    /* In msecs */
+#define PING_TIMEOUT        	3000    /* In msecs */
+#define PING_PKT_SIZE       	20      /* In bytes */
+#define NO_OF_ATTEMPTS      	3
+#define OSI_STACK_SIZE      	2048
 
 // Application specific status/error codes
 typedef enum{
@@ -109,13 +52,11 @@ typedef enum{
     LAN_CONNECTION_FAILED = -0x7D0,       
     INTERNET_CONNECTION_FAILED = LAN_CONNECTION_FAILED - 1,
     DEVICE_NOT_IN_STATION_MODE = INTERNET_CONNECTION_FAILED - 1,
-
     STATUS_CODE_MAX = -0xBB8
 }e_AppStatusCodes;
 
-
 //*****************************************************************************
-//                 GLOBAL VARIABLES -- Start
+//                 GLOBAL VARIABLES
 //*****************************************************************************
 unsigned long  g_ulStatus = 0;//SimpleLink Status
 unsigned long  g_ulPingPacketsRecv = 0; //Number of Ping Packets received 
@@ -129,11 +70,6 @@ extern void (* const g_pfnVectors[])(void);
 #if defined(ewarm)
 extern uVectorEntry __vector_table;
 #endif
-//*****************************************************************************
-//                 GLOBAL VARIABLES -- End
-//*****************************************************************************
-
-
 
 //****************************************************************************
 //                      LOCAL FUNCTION PROTOTYPES
@@ -144,7 +80,6 @@ static long CheckLanConnection();
 static long CheckInternetConnection();
 static void InitializeAppVariables();
 static long ConfigureSimpleLinkToDefaultState();
-
 
 #ifdef USE_FREERTOS
 //*****************************************************************************
@@ -221,11 +156,9 @@ void vApplicationStackOverflowHook( OsiTaskHandle *pxTask,
 }
 #endif //USE_FREERTOS
 
-
 //*****************************************************************************
 // SimpleLink Asynchronous Event Handlers -- Start
 //*****************************************************************************
-
 
 //*****************************************************************************
 //
@@ -244,14 +177,12 @@ void SimpleLinkWlanEventHandler(SlWlanEvent_t *pWlanEvent)
         {
             SET_STATUS_BIT(g_ulStatus, STATUS_BIT_CONNECTION);
             
-            //
             // Information about the connected AP (like name, MAC etc) will be
             // available in 'slWlanConnectAsyncResponse_t'-Applications
             // can use it if required
             //
             //  slWlanConnectAsyncResponse_t *pEventData = NULL;
             // pEventData = &pWlanEvent->EventData.STAandP2PModeWlanConnected;
-            //
             
             // Copy new connection SSID and BSSID to global parameters
             memcpy(g_ucConnectionSSID,pWlanEvent->EventData.
@@ -361,7 +292,6 @@ void SimpleLinkNetAppEventHandler(SlNetAppEvent_t *pNetAppEvent)
     }
 }
 
-
 //*****************************************************************************
 //
 //! \brief This function handles HTTP server events
@@ -390,15 +320,12 @@ void SimpleLinkHttpServerCallback(SlHttpServerEvent_t *pHttpEvent,
 //*****************************************************************************
 void SimpleLinkGeneralEventHandler(SlDeviceEvent_t *pDevEvent)
 {
-    //
     // Most of the general errors are not FATAL are are to be handled
     // appropriately by the application
-    //
     UART_PRINT("[GENERAL EVENT] - ID=[%d] Sender=[%d]\n\n",
                pDevEvent->EventData.deviceEvent.status, 
                pDevEvent->EventData.deviceEvent.sender);
 }
-
 
 //*****************************************************************************
 //
@@ -411,9 +338,7 @@ void SimpleLinkGeneralEventHandler(SlDeviceEvent_t *pDevEvent)
 //*****************************************************************************
 void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
 {
-    //
     // This application doesn't work w/ socket - Events are not expected
-    //
     switch( pSock->Event )
     {
         case SL_SOCKET_TX_FAILED_EVENT:
@@ -436,7 +361,6 @@ void SimpleLinkSockEventHandler(SlSockEvent_t *pSock)
     }
 }
 
-
 //*****************************************************************************
 //
 //! \brief This function handles ping report events
@@ -456,8 +380,6 @@ static void SimpleLinkPingReport(SlPingReport_t *pPingReport)
 // SimpleLink Asynchronous Event Handlers -- End
 //*****************************************************************************
 
-
-
 //*****************************************************************************
 //
 //! \brief This function initializes the application variables
@@ -476,7 +398,6 @@ static void InitializeAppVariables()
     memset(g_ucConnectionBSSID,0,sizeof(g_ucConnectionBSSID));
 }
 
-
 //*****************************************************************************
 //! \brief This function puts the device in its default state. It:
 //!           - Set the mode to STATION
@@ -492,7 +413,6 @@ static void InitializeAppVariables()
 //! \param   none
 //! \return  On success, zero is returned. On error, negative is returned
 //*****************************************************************************
-
 static long ConfigureSimpleLinkToDefaultState()
 {
     SlVersionFull   ver = {0};
@@ -567,14 +487,10 @@ static long ConfigureSimpleLinkToDefaultState()
     lRetVal = sl_WlanProfileDel(0xFF);
     ASSERT_ON_ERROR(lRetVal);
 
-    
-
-    //
     // Device in station-mode. Disconnect previous connection if any
     // The function returns 0 if 'Disconnected done', negative number if already
     // disconnected Wait for 'disconnection' event if 0 is returned, Ignore 
     // other return-codes
-    //
     lRetVal = sl_WlanDisconnect();
     if(0 == lRetVal)
     {
@@ -674,7 +590,6 @@ static long CheckLanConnection()
     return SUCCESS;
 }
 
-
 //*****************************************************************************
 //! \brief This function checks the internet connection by pinging 
 //!     the external-host (HOST_NAME)
@@ -734,7 +649,6 @@ static long CheckInternetConnection()
     // Internet connection is successful
     return SUCCESS;
 }
-
 
 //****************************************************************************
 //
@@ -796,7 +710,6 @@ void WlanStationMode( void *pvParameters )
     long lRetVal = -1;
     InitializeAppVariables();
 
-    //
     // Following function configure the device to default state by cleaning
     // the persistent settings stored in NVMEM (viz. connection profiles &
     // policies, power policy etc)
@@ -806,7 +719,6 @@ void WlanStationMode( void *pvParameters )
     //
     // Note that all profiles and persistent settings that were done on the
     // device will be lost
-    //
     lRetVal = ConfigureSimpleLinkToDefaultState();
     if(lRetVal < 0)
     {
@@ -820,10 +732,8 @@ void WlanStationMode( void *pvParameters )
 
     UART_PRINT("Device is configured in default state \n\r");
 
-    //
     // Assumption is that the device is configured in station mode already
     // and it is in its default state
-    //
     lRetVal = sl_Start(0, 0, 0);
     if (lRetVal < 0 || ROLE_STA != lRetVal)
     {
@@ -833,9 +743,7 @@ void WlanStationMode( void *pvParameters )
 
     UART_PRINT("Device started as STATION \n\r");
 
-    //
     //Connecting to WLAN AP
-    //
     lRetVal = WlanConnect();
     if(lRetVal < 0)
     {
@@ -846,9 +754,7 @@ void WlanStationMode( void *pvParameters )
     UART_PRINT("Connection established w/ AP and IP is aquired \n\r");
     UART_PRINT("Pinging...! \n\r");
 
-    //
     // Checking the Lan connection by pinging to AP gateway
-    //
     lRetVal = CheckLanConnection();
     if(lRetVal < 0)
     {
@@ -859,9 +765,7 @@ void WlanStationMode( void *pvParameters )
     // Turn on GREEN LED when device gets PING response from AP
     GPIO_IF_LedOn(MCU_EXECUTE_SUCCESS_IND);
 
-    //
     // Checking the internet connection by pinging to external host
-    //
     lRetVal = CheckInternetConnection();
     if(lRetVal < 0)
     {
@@ -876,9 +780,7 @@ void WlanStationMode( void *pvParameters )
 
     UART_PRINT("WLAN STATION example executed successfully \n\r");
 
-    //
     // power off the network processor
-    //
     lRetVal = sl_Stop(SL_STOP_TIMEOUT);
 
     LOOP_FOREVER();
@@ -930,9 +832,7 @@ BoardInit(void)
 #endif
 #endif //USE_TIRTOS
 
-    //
     // Enable Processor
-    //
     MAP_IntMasterEnable();
     MAP_IntEnable(FAULT_SYSTICK);
 
@@ -953,31 +853,21 @@ void main()
 {
     long lRetVal = -1;
 
-    //
     // Board Initialization
-    //
     BoardInit();
     
-    //
     // configure the GPIO pins for LEDs,UART
-    //
     PinMuxConfig();
 
-    //
     // Configure the UART
-    //
 #ifndef NOTERM
     InitTerm();
 #endif  //NOTERM
     
-    //
     // Display Application Banner
-    //
     DisplayBanner(APPLICATION_NAME);
     
-    //
     // Configure all 3 LEDs
-    //
     GPIO_IF_LedConfigure(LED1|LED2|LED3);
 
     // switch off all LEDs
@@ -1021,15 +911,6 @@ void main()
         LOOP_FOREVER();
     }
      
-    //
     // Start the task scheduler
-    //
     osi_start();
   }
-
-//*****************************************************************************
-//
-// Close the Doxygen group.
-//! @}
-//
-//*****************************************************************************
