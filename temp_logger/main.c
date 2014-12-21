@@ -7,10 +7,6 @@
 //
 //*****************************************************************************
 
-// Standard includes
-#include <stdlib.h>
-#include <string.h>
-
 // Simplelink includes
 #include "simplelink.h"
 
@@ -21,7 +17,6 @@
 #include "rom_map.h"
 #include "interrupt.h"
 #include "prcm.h"
-#include "utils.h"
 
 //Free_rtos/ti-rtos includes
 #include "osi.h"

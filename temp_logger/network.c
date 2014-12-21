@@ -5,24 +5,12 @@
  *      Author: Mitchel Pigsley
  */
 
-// Standard includes
-#include <stdlib.h>
-#include <string.h>
-
 // Simplelink includes
 #include "simplelink.h"
 
 //Driverlib includes
-#include "hw_types.h"
-#include "hw_ints.h"
-#include "rom.h"
 #include "rom_map.h"
-#include "interrupt.h"
-#include "prcm.h"
 #include "utils.h"
-
-//Free_rtos/ti-rtos includes
-#include "osi.h"
 
 //Common interface includes
 #include "gpio_if.h"
@@ -30,8 +18,8 @@
 #include "uart_if.h"
 #endif
 #include "common.h"
-#include "pinmux.h"
 
+//My includes
 #include "network.h"
 
 //*****************************************************************************
