@@ -1,7 +1,7 @@
 //*****************************************************************************
-// adc_userinput.h 
+// pinmux.h
 //
-// Function Prototypes for ADC USER Input
+// function prototype for pinmuxconfig
 //
 // Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
 // 
@@ -36,34 +36,14 @@
 //
 //*****************************************************************************
 
-
-#ifndef __ADC_USERINPUT_H__
-#define __ADC_USERINPUT_H__
-
-//*****************************************************************************
-//
-// If building with a C++ compiler, make all of the definitions in this header
-// have a C binding.
+// This file was automatically generated on 7/21/2014 at 3:06:20 PM
+// Version: 1.0.1
 //
 //*****************************************************************************
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-bool ADCParser( char *ucCMD,unsigned long *puiAdcInputPin);
-bool ReadFromUser(unsigned long * puiAdcInputPin);
-void UsageDisplay();
 
-//*****************************************************************************
-//
-// Mark the end of the C bindings section for C++ compilers.
-//
-//*****************************************************************************
-#ifdef __cplusplus
-}
-#endif
+#ifndef __PINMUX_H__
+#define __PINMUX_H__
 
-#endif
+extern void PinMuxConfig(void);
 
-
-
+#endif //  __PINMUX_H__
