@@ -79,4 +79,3 @@ SECTIONS
     .sysmem :   > SRAM_DATA
     .stack  :   > SRAM_DATA(HIGH)
 }
-

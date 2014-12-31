@@ -6,8 +6,14 @@
  */
 
 #ifndef TEMP_H_
-#define TEMP_H_
 
-float GetTemperature();
+#include <stdint.h>
+
+#define TEMP_H_
+#define Q_NUM 18
+
+extern uint32_t temperature;
+
+void GetTemperature();
 
 #endif /* TEMP_H_ */

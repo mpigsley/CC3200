@@ -1,7 +1,7 @@
 //*****************************************************************************
-// cc3200v1p32.cmd
+// pinmux.h
 //
-// CCS linker configuration file for cc3200 ES 1.32.
+// function prototype for pinmuxconfig
 //
 // Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
 // 
@@ -36,47 +36,14 @@
 //
 //*****************************************************************************
 
-
---retain=g_pfnVectors
-
-//*****************************************************************************
-// The following command line options are set as part of the CCS project.  
-// If you are building using the command line, or for some reason want to    
-// define them here, you can uncomment and modify these lines as needed.     
-// If you are using CCS for building, it is probably better to make any such 
-// modifications in your CCS project and leave this file alone.              
+// This file was automatically generated on 7/21/2014 at 3:06:20 PM
+// by TI PinMux version 3.0.334
+//
 //*****************************************************************************
 
+#ifndef __PINMUX_H__
+#define __PINMUX_H__
 
-//*****************************************************************************
-// The starting address of the application.  Normally the interrupt vectors  
-// must be located at the beginning of the application.                      
-//*****************************************************************************
-#define RAM_BASE 0x20004000
+extern void PinMuxConfig(void);
 
-/* System memory map */
-
-MEMORY
-{
-    /* Application uses internal RAM for program and data */
-    SRAM_CODE (RWX) : origin = 0x20004000, length = 0x13000
-    SRAM_DATA (RWX) : origin = 0x20017000, length = 0x19000
-}
-
-/* Section allocation in memory */
-
-SECTIONS
-{
-    .intvecs:   > RAM_BASE
-    .init_array : > SRAM_CODE
-    .vtable :   > SRAM_CODE
-    .text   :   > SRAM_CODE
-    .const  :   > SRAM_CODE
-    .cinit  :   > SRAM_CODE
-    .pinit  :   > SRAM_CODE
-    .data   :   > SRAM_DATA
-    .bss    :   > SRAM_DATA
-    .sysmem :   > SRAM_DATA
-    .stack  :   > SRAM_DATA(HIGH)
-}
-
+#endif //  __PINMUX_H__

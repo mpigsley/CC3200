@@ -1,7 +1,7 @@
 //*****************************************************************************
-// pinmux.h
+// network_if.h
 //
-// function prototype for pinmuxconfig
+// Networking interface macro and function prototypes for CC3200 device
 //
 // Copyright (C) 2014 Texas Instruments Incorporated - http://www.ti.com/ 
 // 
@@ -36,14 +36,47 @@
 //
 //*****************************************************************************
 
-// This file was automatically generated on 7/21/2014 at 3:06:20 PM
-// Version: 1.0.1
+#ifndef __NETWORK_IF__H__
+#define __NETWORK_IF__H__
+
+//*****************************************************************************
+//
+// If building with a C++ compiler, make all of the definitions in this header
+// have a C binding.
 //
 //*****************************************************************************
 
-#ifndef __PINMUX_H__
-#define __PINMUX_H__
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
-extern void PinMuxConfig(void);
 
-#endif //  __PINMUX_H__
+//*****************************************************************************
+//
+// API Function prototypes
+//
+//*****************************************************************************
+extern long Network_IF_InitDriver(unsigned int uiMode);
+extern long Network_IF_DeInitDriver(void);
+extern long Network_IF_ConnectAP(char * pcSsid, SlSecParams_t SecurityParams);
+extern long Network_IF_DisconnectFromAP();
+extern long Network_IF_IpConfigGet(unsigned long *aucIP, unsigned long *aucSubnetMask,
+                unsigned long *aucDefaultGateway, unsigned long *aucDNSServer);
+extern long Network_IF_GetHostIP( char* pcHostName,unsigned long * pDestinationIP);
+extern unsigned long Network_IF_CurrentMCUState();
+extern void Network_IF_UnsetMCUMachineState(char stat);
+extern void Network_IF_SetMCUMachineState(char stat);
+extern void Network_IF_ResetMCUStateMachine();
+extern unsigned short itoa(short cNum, char *cString);
+//*****************************************************************************
+//
+// Mark the end of the C bindings section for C++ compilers.
+//
+//*****************************************************************************
+#ifdef __cplusplus
+}
+#endif
+#endif //  __MCU_COMMON_H__
+
+
