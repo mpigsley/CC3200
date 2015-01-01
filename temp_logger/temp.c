@@ -16,6 +16,7 @@
 
 // My includes
 #include "temp.h"
+#include "q_number.h"
 
 // My defines
 #define ADC_PIN PIN_58
@@ -26,28 +27,8 @@
 #define RES_Q 93 // RESOLUTION ^^ - Q18
 #define TO_F_Q 471859 // 1.8 - Q18
 
-#define Round(x) ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
-
 // Global variables
 uint32_t temperature = 0;
-
-int32_t ToQ(int32_t num)
-{
-	return num << Q_NUM;
-}
-
-int32_t QMultiply(int32_t a, int32_t b)
-{
-
-	int64_t mult = ((int64_t)a) * ((int64_t)b);
-	return (int32_t)(mult >> Q_NUM);
-}
-
-int32_t QDivide(int32_t a, int32_t b)
-{
-	int64_t preMult = ((int64_t)a) << Q_NUM;
-	return (int32_t)(preMult / b);
-}
 
 void GetTemperature() {
 	// Pinmux for the selected ADC input pin

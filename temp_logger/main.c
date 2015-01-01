@@ -78,9 +78,7 @@ static void BoardInit(void)
 {
 /* In case of TI-RTOS vector table is initialize by OS itself */
 #ifndef USE_TIRTOS
-  //
   // Set vector table base
-  //
 #if defined(ccs)
     MAP_IntVTableBaseSet((unsigned long)&g_pfnVectors[0]);
 #endif
@@ -88,9 +86,8 @@ static void BoardInit(void)
     MAP_IntVTableBaseSet((unsigned long)&__vector_table);
 #endif
 #endif
-    //
+
     // Enable Processor
-    //
     MAP_IntMasterEnable();
     MAP_IntEnable(FAULT_SYSTICK);
 
