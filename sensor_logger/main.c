@@ -2,8 +2,8 @@
 //	Author: 		Mitchel Pigsley
 //	Created: 		12/29/2014
 //	Last Updated: 	12/29/2014
-//	Description:	Get temperature reading from a TMP36 component and upload
-//					data to web server at a rate of once per minute.
+//	Description:	Get sensor readings and write them to UART. Deep sleep
+//					between reading and not in debug mode.
 //
 //*****************************************************************************
 
