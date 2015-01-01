@@ -71,8 +71,7 @@ static void DisplayBanner(char * AppName)
 
 void SensorLogger(void)
 {
-	GetTemperature();
-	UART_PRINT("Temperature: %ld\r\n", temperature);
+	UART_PRINT("Temperature: %ld\r\n", GetTemperature());
     MAP_WatchdogIntClear(WDT_BASE);
 }
 

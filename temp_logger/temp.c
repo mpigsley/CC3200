@@ -27,10 +27,7 @@
 #define RES_Q 93 // RESOLUTION ^^ - Q18
 #define TO_F_Q 471859 // 1.8 - Q18
 
-// Global variables
-uint32_t temperature = 0;
-
-void GetTemperature() {
+uint32_t GetTemperature() {
 	// Pinmux for the selected ADC input pin
 	MAP_PinTypeADC(ADC_PIN,PIN_MODE_255);
 
@@ -71,5 +68,5 @@ void GetTemperature() {
     millivolts = QMultiply(millivolts, RES_Q);
     millivolts = QMultiply(millivolts, ToQ(1000));
     int32_t celcius = QDivide(millivolts - ToQ(500), ToQ(10));
-    temperature = QMultiply(celcius, TO_F_Q) + ToQ(32);
+    return QMultiply(celcius, TO_F_Q) + ToQ(32);
 }

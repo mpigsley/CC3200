@@ -10,8 +10,6 @@
 
 #include <stdint.h>
 
-extern uint32_t temperature;
-
-void GetTemperature();
+uint32_t GetTemperature();
 
 #endif /* TEMP_H_ */
