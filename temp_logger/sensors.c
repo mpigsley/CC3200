@@ -27,8 +27,7 @@
 #define ADC_RES 93 // RESOLUTION ^^ - Q18
 
 #define TEMP_TO_F 471859 // 1.8 - Q18
-#define LUX_OFFSET 45283 // .188 - Q18
-#define LUX_MULT 223649989 // 853.157 - Q18
+#define LUX_MULT 192675840 // 735 - Q18
 #define LUX_DEFAULT 26214 // .1 - Q18
 
 uint32_t GetVoltageFromPin(unsigned int pin);
@@ -45,12 +44,7 @@ uint32_t GetTemperature()
 // Return in Lux
 uint32_t GetAmbientLight()
 {
-    int32_t volts = GetVoltageFromPin(LIGHT_PIN) - LUX_OFFSET;
-    if (volts < 0)
-    {
-    	return LUX_DEFAULT; // Shouldn't be possible..
-    }
-    return QMultiply(volts, LUX_MULT);
+    return QMultiply(GetVoltageFromPin(LIGHT_PIN), LUX_MULT);
 }
 
 uint32_t GetVoltageFromPin(unsigned int pin)
