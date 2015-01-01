@@ -40,17 +40,20 @@
 // My includes
 #include "temp.h"
 
+// My defines
 #define APPLICATION_NAME        	"Temperature Logger"
 #define APPLICATION_VERSION     	"0.0.1"
+#define DEBUG						TRUE
 
 #define FOREVER						1
 #define MAP_SysCtlClockGet			80000000
-#define MILLISECONDS_TO_TICKS(ms)	((MAP_SysCtlClockGet / 1000) * (ms))
+#define SEC_TO_TICKS(s)				(MAP_SysCtlClockGet * s)
+#define DEEP_SLEEP_SEC_TO_TICKS(s)	((MAP_SysCtlClockGet / 2) * s)
 
-#ifdef PROD
-#define WD_PERIOD_MS				30000
+#ifndef DEBUG
+#define WD_PERIOD_MS				60
 #else
-#define WD_PERIOD_MS				1000
+#define WD_PERIOD_MS				1
 #endif
 
 #if defined(ccs)
@@ -69,7 +72,7 @@ static void DisplayBanner(char * AppName)
     UART_PRINT("\n\n\n\r");
 }
 
-void SensorLogger(void)
+void SensorLoggerInt(void)
 {
 	UART_PRINT("Temperature: %ld\r\n", GetTemperature());
     MAP_WatchdogIntClear(WDT_BASE);
@@ -110,13 +113,17 @@ void main(void)
     GPIO_IF_LedOff(MCU_RED_LED_GPIO);
 
 	// Enable Watchdog Timer
-    WDT_IF_Init(SensorLogger, MILLISECONDS_TO_TICKS(WD_PERIOD_MS));
+#ifndef DEBUG
+    WDT_IF_Init(SensorLoggerInt, DEEP_SLEEP_SEC_TO_TICKS(WD_PERIOD_MS));
+#else
+    WDT_IF_Init(SensorLoggerInt, SEC_TO_TICKS(WD_PERIOD_MS));
+#endif
     if(!MAP_WatchdogRunning(WDT_BASE))
     {
        WDT_IF_DeInit();
     }
 
-#ifdef PROD
+#ifndef DEBUG
     // Enable the Sleep Clock
     MAP_PRCMPeripheralClkEnable(PRCM_WDT, PRCM_DSLP_MODE_CLK);
     while(FOREVER)
