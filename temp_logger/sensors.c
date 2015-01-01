@@ -1,5 +1,5 @@
 /*
- * temp.c
+ * sensors.c
  *
  *  Created on: Dec 19, 2014
  *      Author: Mitchel Pigsley
@@ -15,25 +15,52 @@
 #include "adc.h"
 
 // My includes
-#include "temp.h"
+#include "sensors.h"
 #include "q_number.h"
 
 // My defines
-#define ADC_PIN PIN_58
+#define TEMP_PIN PIN_58
+#define LIGHT_PIN PIN_59
 
 #define NUM_AVGS 512
 #define RESOLUTION 1.46/4096
+#define ADC_RES 93 // RESOLUTION ^^ - Q18
 
-#define RES_Q 93 // RESOLUTION ^^ - Q18
-#define TO_F_Q 471859 // 1.8 - Q18
+#define TEMP_TO_F 471859 // 1.8 - Q18
+#define LUX_OFFSET 45283 // .188 - Q18
+#define LUX_MULT 223649989 // 853.157 - Q18
+#define LUX_DEFAULT 26214 // .1 - Q18
 
-uint32_t GetTemperature() {
+uint32_t GetVoltageFromPin(unsigned int pin);
+
+// Return in Degrees Fahrenheit
+uint32_t GetTemperature()
+{
+    int32_t volts = GetVoltageFromPin(TEMP_PIN);
+    int32_t millivolts = QMultiply(volts, ToQ(1000));
+    int32_t celcius = QDivide(millivolts - ToQ(500), ToQ(10));
+    return QMultiply(celcius, TEMP_TO_F) + ToQ(32); // Fahrenheit Calculation
+}
+
+// Return in Lux
+uint32_t GetAmbientLight()
+{
+    int32_t volts = GetVoltageFromPin(LIGHT_PIN) - LUX_OFFSET;
+    if (volts < 0)
+    {
+    	return LUX_DEFAULT; // Shouldn't be possible..
+    }
+    return QMultiply(volts, LUX_MULT);
+}
+
+uint32_t GetVoltageFromPin(unsigned int pin)
+{
 	// Pinmux for the selected ADC input pin
-	MAP_PinTypeADC(ADC_PIN,PIN_MODE_255);
+	MAP_PinTypeADC(pin, PIN_MODE_255);
 
 	// Convert pin number to channel number
 	unsigned int adcChannel;
-	switch(ADC_PIN) {
+	switch(pin) {
 		case PIN_58: {adcChannel = ADC_CH_1;}break;
 		case PIN_59: {adcChannel = ADC_CH_2;}break;
 		case PIN_60: {adcChannel = ADC_CH_3;}break;
@@ -52,7 +79,7 @@ uint32_t GetTemperature() {
     // Enable ADC module
     MAP_ADCEnable(ADC_BASE);
 
-    // Sample 512 times and average
+    // Sample multiple times and average
 	uint16_t i = 0;
 	int32_t sampleTotal = 0, numSamples = 0;
     for (i = 0; i < NUM_AVGS; i++) {
@@ -64,9 +91,6 @@ uint32_t GetTemperature() {
 		}
     }
 
-    int32_t millivolts = ToQ(Round(sampleTotal / numSamples));
-    millivolts = QMultiply(millivolts, RES_Q);
-    millivolts = QMultiply(millivolts, ToQ(1000));
-    int32_t celcius = QDivide(millivolts - ToQ(500), ToQ(10));
-    return QMultiply(celcius, TO_F_Q) + ToQ(32);
+    // Return the voltage on the pin
+    return QMultiply(ToQ(Round(sampleTotal / numSamples)), ADC_RES);
 }

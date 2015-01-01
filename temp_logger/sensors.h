@@ -1,5 +1,5 @@
 /*
- * temp.h
+ * sensors.h
  *
  *  Created on: Dec 19, 2014
  *      Author: Mitchel Pigsley
@@ -11,5 +11,6 @@
 #include <stdint.h>
 
 uint32_t GetTemperature();
+uint32_t GetAmbientLight();
 
 #endif /* TEMP_H_ */

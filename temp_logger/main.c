@@ -38,7 +38,7 @@
 #endif
 
 // My includes
-#include "temp.h"
+#include "sensors.h"
 
 // My defines
 #define APPLICATION_NAME        	"Temperature Logger"
@@ -75,6 +75,7 @@ static void DisplayBanner(char * AppName)
 void SensorLoggerInt(void)
 {
 	UART_PRINT("Temperature: %ld\r\n", GetTemperature());
+	UART_PRINT("Ambient Light: %ld\r\n", GetAmbientLight());
     MAP_WatchdogIntClear(WDT_BASE);
 }
 
